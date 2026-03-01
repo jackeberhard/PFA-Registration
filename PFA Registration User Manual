@@ -1,0 +1,227 @@
+# PFA Event Registration System
+
+**Version 1.0** | Created by CWT1 Jack Eberhard | Last updated 1MAR2026
+
+A fullscreen desktop application for managing Physical Fitness Assessment sign-ups. Participants register themselves through a guided form, and administrators manage days, time slots, modalities, and capacity through a password-protected panel.
+
+---
+
+## Requirements
+
+- **Python 3.10 or newer** (tested on 3.14)
+- **No additional packages required** — the application uses only Python standard libraries (tkinter, csv, json)
+- **Runs on Windows, Unix, and MacOS
+
+To check your Python version, open a command prompt and run:
+
+```
+python --version
+```
+
+If you do not have Python installed, download it from [python.org](https://www.python.org/downloads/). During installation, make sure to check **"Add Python to PATH"**.
+
+---
+
+## Getting Started
+
+### First-Time Setup
+
+1. Create a folder for the application (e.g., `C:\Users\YourName\Documents\PFA`)
+2. Place `pfa_registration.py` in that folder
+3. Double-click the file to launch, or open a command prompt in that folder and run:
+
+```
+python pfa_registration.py
+```
+
+On first launch, the application will automatically create two files in the same folder:
+
+| File | Purpose |
+|------|---------|
+| `pfa_config.json` | Stores your day/time slot/modality/capacity configuration and admin password |
+| `pfa_registrations.csv` | Stores all participant registration data |
+
+**Do not delete these files** while the system is in use. They are your data. Back them up regularly.
+
+### Default Configuration
+
+Out of the box, the system comes pre-configured with:
+
+- **Days:** Monday through Friday (dates set to TBD)
+- **Time Slots:** 0800–0900, 0900–1000, 1000–1100, 1100–1200, 1200–1300
+- **Modalities:** Run (20), Swim (20), Bike (12), Treadmill (8), Row (6)
+- **Max per time slot:** 20 participants
+- **Admin password:** `admin2025`
+
+You should log into the Admin Panel immediately after first launch to configure your actual days, dates, time slots, and capacity limits before opening the system to participants. **Change the admin password** as well — see the About tab in the Admin Panel.
+
+---
+
+## How the Application Works
+
+The application launches in **fullscreen mode**. The window cannot be closed with the X button — this is intentional to prevent accidental closure during an event. The only way to exit is through the Admin Panel.
+
+### Main Menu
+
+The main menu has two options:
+
+- **New Registration** — Opens the participant registration form
+- **Admin Panel** — Prompts for the admin password
+
+---
+
+## Participant Registration
+
+Registration is a two-step process.
+
+### Step 1: Personal Information
+
+Participants fill in:
+
+| Field | Required | Notes |
+|-------|----------|-------|
+| Last Name | Yes | |
+| First Name | Yes | |
+| Middle Initial | No | Single letter only |
+| Sex | Yes | Click M or F (button highlights when selected) |
+| Age | Yes | Must be a number between 1 and 120 |
+| Rank | Yes | Free text (e.g., SN, PO2, LCDR) |
+
+### Step 2: Event Selection
+
+After personal info is validated, the participant selects their event through a three-step guided flow:
+
+1. **Choose a Day** — All configured days are shown as buttons. Click one to select it (it highlights blue).
+2. **Choose a Time Slot** — Only the time slots configured for that day appear. Each button shows how many spots remain. Slots that are full show "FULL" and cannot be clicked.
+3. **Choose an Event** — Only the modalities configured for that specific day and time slot appear. Each button shows how many spots are left based on both the per-modality cap and the overall slot cap. Events that are full are hidden.
+
+After selecting all three, click **Complete Registration**. A confirmation screen displays the participant's details. From there, they can register another person or return to the main menu.
+
+### How Capacity Works
+
+Each time slot has two layers of capacity control:
+
+- **Slot cap** — The maximum total number of participants across all modalities for that time slot (e.g., 30 people total in the 0800–0900 slot)
+- **Modality cap** — The maximum number of participants for a specific event within that slot (e.g., only 6 people can row in that slot)
+
+A participant can only sign up if both the slot has room AND the specific modality has room. The number of "spots left" shown on each event button reflects whichever limit is tighter.
+
+---
+
+## Admin Panel
+
+Access the Admin Panel by clicking the lock button on the main menu and entering the admin password. The default password is `admin2025`. The panel has six tabs:
+
+### Overview & Stats
+
+A dashboard showing:
+
+- Total number of registrations
+- Counts broken down by modality (Run, Swim, Bike, Treadmill, Row)
+- Counts broken down by day
+
+### All Registrations
+
+A searchable table of every registration in the system.
+
+- **Search** — Type in the search box (top right) to filter by any field: name, rank, event, day, time slot, etc. The table filters in real time as you type.
+- **Delete** — Click a row to select it, then click the Delete button. You will be asked to confirm before the record is removed.
+
+### Slot Capacity
+
+A read-only overview of how full each time slot is across all days. Color-coded:
+
+- **Green** — Under 75% full
+- **Yellow** — 75% or more full
+- **Red** — Completely full
+
+Shows both the overall slot count (e.g., 15/30 total) and the breakdown by modality (e.g., Run: 8/20, Swim: 5/20).
+
+### Manage Days
+
+Add, rename, remove, or redate event days.
+
+- **Add a Day** — Enter a name (e.g., "Monday") and a date (e.g., "22MAR26"), then click Add. The day will be created with the default time slots and modalities. You can have multiple days with the same name as long as the dates are different (e.g., two "Monday" entries on different weeks).
+- **Edit a Day** — Change the name or date directly in the text fields for any existing day, then click Save All Changes. If you rename a day, all existing registrations for that day will be updated automatically.
+- **Remove a Day** — Click the Remove button next to any day. Existing registrations for that day are preserved in the CSV but the day will no longer appear for new sign-ups.
+
+### Manage Time Slots
+
+Add, remove, and configure time slots, including per-slot participant caps and per-modality caps.
+
+**Adding a new time slot:**
+
+1. Enter the time slot in military time format (e.g., `1300-1400`)
+2. Set the max participants for the slot (e.g., 30)
+3. Check which days you want to add this time slot to (all are checked by default)
+4. Check which modalities should be available and set the max for each. For example, if you can support 10 rowers on one day instead of the usual 6, set Row to 10.
+5. Click Add Time Slot
+
+**Editing an existing time slot:**
+
+Click the Edit button next to any time slot to open a dialog where you can change the max participants and adjust which modalities are available and their individual caps. This lets you fine-tune capacity on a per-day, per-slot basis.
+
+**Removing a time slot:**
+
+Click the Remove button. The button shows how many existing registrations are in that slot. Registrations are not deleted when you remove a slot — they remain in the CSV but the slot will no longer be available for new sign-ups.
+
+### About
+
+Displays version information and provides the ability to **change the admin password**:
+
+1. Enter your current password
+2. Enter your new password (minimum 4 characters)
+3. Confirm the new password
+4. Click Update Password
+
+The password is stored in `pfa_config.json`. If you ever forget it, you can open that file in a text editor and look for the `"admin_password"` field.
+
+---
+
+## Exiting the Application
+
+The application can only be closed from within the Admin Panel. Click the red **Exit Application** button in the top-right corner of the admin navigation bar. You will be asked to confirm. All data is saved automatically throughout use, so nothing will be lost.
+
+---
+
+## File Reference
+
+### pfa_registrations.csv
+
+All registration data. Can be opened in Excel for reporting, sorting, or printing. Columns:
+
+```
+LastName, FirstName, MI, Sex, Age, Rank, Event, Day, Date, TimeSlot, Timestamp
+```
+
+**Tip:** You can open this file in Excel at any time while the application is running to view or print the data. However, do not edit and save the CSV while the application is running — the application writes to this file and your changes could be overwritten.
+
+### pfa_config.json
+
+All configuration settings including days, dates, time slots, modality caps, slot caps, and the admin password. This file is automatically managed by the application. You should not need to edit it manually unless you need to recover a forgotten admin password.
+
+---
+
+## Tips and Best Practices
+
+- **Configure before opening to participants.** Log in as admin first, set up your days and dates, adjust time slots and capacities, and change the admin password.
+- **Back up your files.** Copy `pfa_registrations.csv` and `pfa_config.json` to a backup location periodically, especially at the end of each registration day.
+- **Use the search feature.** If a participant needs to be removed or you need to verify someone's registration, use the search box in the All Registrations tab rather than scrolling through the full list.
+- **Capacity can be adjusted on the fly.** If you realize mid-event that you can support more (or fewer) people for a modality, go to Manage Time Slots, click Edit on the relevant slot, and change the cap. It takes effect immediately for new registrations.
+- **The CSV is your record.** Even after the event, the CSV file contains a complete record of every registration with timestamps. Keep it for accountability.
+- **Duplicate day names are fine.** If your PFA spans two Mondays, just add "Monday" twice with different dates. The system treats them as separate days.
+- **The application runs offline.** No internet connection is needed. Everything is stored locally.
+
+---
+
+## Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| Application won't start | Make sure Python 3.10+ is installed and added to PATH. Try running `python pfa_registration.py` from a command prompt to see the error message. |
+| "No module named tkinter" | Tkinter is included with standard Python on Windows. If you see this on Linux, install it with `sudo apt install python3-tk`. |
+| Can't close the application | This is by design. Log into the Admin Panel and use the Exit Application button. |
+| Forgot admin password | Open `pfa_config.json` in a text editor (Notepad) and find the `"admin_password"` line. |
+| Data looks wrong after editing CSV manually | If you edit the CSV while the app is running, restart the app to reload the data. |
+| Screen doesn't look right | The app is designed for fullscreen. Press `Alt+F4` if the display is broken, then relaunch. |
+| Want to start fresh | Delete `pfa_registrations.csv` and `pfa_config.json`, then relaunch. Defaults will be recreated. |
