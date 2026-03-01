@@ -11,7 +11,7 @@ This app is designed to take the pfa_registrations.csv test file that is created
 
 1. **Python 3.8 or newer** — Download from [python.org](https://www.python.org/downloads/) if you don't already have it. During installation on Windows, **check the box that says "Add Python to PATH"**.
 
-2. **The script** — `prt_generator.py` (this program).
+2. **The script** — `pfa_form_generator.py` (this program).
 
 3. **The blank PRT Score Sheet** — A PDF copy of the blank NAVPERS 6110/11 form. The script writes data on top of this form, so it must be the same version used to calibrate the layout (Rev. 12-2025). This file is included in the git repository. If you bring your own, make sure to print to PDF first. There will be future updates if the form is changed.
 
@@ -67,13 +67,13 @@ Jones,Patricia,C,F,32,PO1,Run,Monday,22MAR26,1000-1100
 Place the script, the blank form PDF, and your CSV file in the same folder (or know the paths to each). Then open a terminal in that folder and run:
 
 ```
-python prt_generator.py <your_registrations.csv> <blank_form.pdf>
+python pfa_form_generator.py <your_registrations.csv> <blank_form.pdf>
 ```
 
 For example:
 
 ```
-python prt_generator.py pfa_registrations.csv PRT_score_sheet.pdf
+python pfa_form_generator.py pfa_registrations.csv PRT_score_sheet.pdf
 ```
 
 The program will:
@@ -92,7 +92,7 @@ The program will:
 By default the output is saved as `PRT_Score_Sheets_Filled.pdf` next to your CSV. To save it somewhere else or with a different name, use the `-o` flag:
 
 ```
-python prt_generator.py registrations.csv form.pdf -o "C:\Users\me\Desktop\monday_sheets.pdf"
+python pfa_form_generator.py registrations.csv form.pdf -o "C:\Users\me\Desktop\monday_sheets.pdf"
 ```
 
 ---
@@ -113,31 +113,31 @@ You can narrow down which participants appear on the generated sheets using any 
 **Only swimmers:**
 
 ```
-python prt_generator.py registrations.csv form.pdf --event Swim
+python pfa_form_generator.py registrations.csv form.pdf --event Swim
 ```
 
 **Only runners on a specific date:**
 
 ```
-python prt_generator.py registrations.csv form.pdf --date 22MAR26 --event Run
+python pfa_form_generator.py registrations.csv form.pdf --date 22MAR26 --event Run
 ```
 
 **Tuesday, 0800-0900 timeslot only:**
 
 ```
-python prt_generator.py registrations.csv form.pdf --day Tuesday --timeslot 0800-0900
+python pfa_form_generator.py registrations.csv form.pdf --day Tuesday --timeslot 0800-0900
 ```
 
 **Multiple modalities:**
 
 ```
-python prt_generator.py registrations.csv form.pdf --event Swim Run
+python pfa_form_generator.py registrations.csv form.pdf --event Swim Run
 ```
 
 **Multiple dates and a specific timeslot, saved to a custom file:**
 
 ```
-python prt_generator.py registrations.csv form.pdf --date 22MAR26 23MAR26 --timeslot 0800-0900 -o early_morning_sheets.pdf
+python pfa_form_generator.py registrations.csv form.pdf --date 22MAR26 23MAR26 --timeslot 0800-0900 -o early_morning_sheets.pdf
 ```
 
 If no participants match your filters, the program will tell you and exit without creating a file.
@@ -174,13 +174,13 @@ The following fields are left **blank** for on-site use:
 To see the full help text with all options at any time, run:
 
 ```
-python prt_generator.py -h
+python pfa_form_generator.py -h
 ```
 
 Or simply run the command with no arguments:
 
 ```
-python prt_generator.py
+python pfa_form_generator.py
 ```
 
 ---
