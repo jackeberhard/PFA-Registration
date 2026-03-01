@@ -1,0 +1,209 @@
+# PRT Score Sheet Generator
+
+Automatically fills out the official **NAVPERS 6110/11 (Rev. 12-2025) Physical Readiness Test (PRT) Score Sheet** using registration data from a CSV file.
+
+The program reads your PFA registration data, groups participants by date and timeslot, sorts them by cardio modality and then alphabetically by last name, and overlays the information directly onto the blank official form. The filled PDF opens automatically for print preview.
+
+This app is designed to take the pfa_registrations.csv test file that is created when you run your PFA sign ups through the pfa_registration app.
+---
+
+## What You Need Before Starting
+
+1. **Python 3.8 or newer** — Download from [python.org](https://www.python.org/downloads/) if you don't already have it. During installation on Windows, **check the box that says "Add Python to PATH"**.
+
+2. **The script** — `prt_generator.py` (this program).
+
+3. **The blank PRT Score Sheet** — A PDF copy of the blank NAVPERS 6110/11 form. The script writes data on top of this form, so it must be the same version used to calibrate the layout (Rev. 12-2025). This file is included in the git repository. If you bring your own, make sure to print to PDF first. There will be future updates if the form is changed.
+
+4. **A registration CSV file** — A `.csv` file with participant data. This will be created for you by pfa_registration or see [CSV Format](#csv-format) below for the required columns.
+
+---
+
+## First-Time Setup
+
+Open **Command Prompt** (Windows) or **Terminal** (Mac/Linux) and install the two required Python libraries:
+
+```
+pip install pypdf reportlab
+```
+
+That's it. You only need to do this once.
+
+If the `pip` command is not found, try `pip3 install pypdf reportlab` or `python -m pip install pypdf reportlab`.
+
+---
+
+## CSV Format
+
+## If you used the PFA registration app, all data will be formatted properly. If not follow these directions:
+
+The registration CSV must have the following columns in the header row. Column order does not matter, but the names must match exactly (case-sensitive):
+
+| Column      | Description                          | Example           |
+|-------------|--------------------------------------|-------------------|
+| LastName    | Participant's last name              | Brown             |
+| FirstName   | Participant's first name             | Paul              |
+| MI          | Middle initial                       | H                 |
+| Sex         | M or F                               | M                 |
+| Age         | Age in years                         | 33                |
+| Rank        | Pay grade / rate abbreviation        | PO2               |
+| Event       | Cardio modality                      | Run               |
+| Day         | Day of the week                      | Monday            |
+| Date        | Date of the PRT                      | 22MAR26           |
+| TimeSlot    | Time window                          | 1000-1100         |
+
+Example CSV:
+
+```
+LastName,FirstName,MI,Sex,Age,Rank,Email,Event,Day,Date,TimeSlot
+Brown,Paul,H,M,33,PO2,Run,Monday,22MAR26,1000-1100
+Jones,Patricia,C,F,32,PO1,Run,Monday,22MAR26,1000-1100
+```
+
+---
+
+## Basic Usage
+
+Place the script, the blank form PDF, and your CSV file in the same folder (or know the paths to each). Then open a terminal in that folder and run:
+
+```
+python prt_generator.py <your_registrations.csv> <blank_form.pdf>
+```
+
+For example:
+
+```
+python prt_generator.py pfa_registrations.csv PRT_score_sheet.pdf
+```
+
+The program will:
+
+1. Read all participants from the CSV.
+2. Group them by **Date**, **Day**, and **TimeSlot**.
+3. Within each group, sort by **cardio modality** (e.g., all Run participants first, then Swim), then **alphabetically by last name** within each modality.
+4. Fill out one score sheet page per group (up to 20 participants per page). If a group has more than 20 people, it automatically creates additional pages.
+5. Save the output as `PRT_Score_Sheets_Filled.pdf` in the same folder as the CSV.
+6. Open the PDF in your default viewer so you can preview and print (Ctrl+P).
+
+---
+
+## Specifying an Output File
+
+By default the output is saved as `PRT_Score_Sheets_Filled.pdf` next to your CSV. To save it somewhere else or with a different name, use the `-o` flag:
+
+```
+python prt_generator.py registrations.csv form.pdf -o "C:\Users\me\Desktop\monday_sheets.pdf"
+```
+
+---
+
+## Filtering
+
+You can narrow down which participants appear on the generated sheets using any combination of the filter flags below. All filters are **case-insensitive** and accept **multiple values** separated by spaces.
+
+| Flag                      | What it filters         | Example values              |
+|---------------------------|-------------------------|-----------------------------|
+| `--date`                  | PRT date(s)             | `22MAR26`, `23MAR26`        |
+| `--day`                   | Day(s) of the week      | `Monday`, `Tuesday`         |
+| `--timeslot`              | Time window(s)          | `0800-0900`, `1000-1100`    |
+| `--event` or `--modality` | Cardio modality(ies)    | `Run`, `Swim`, `Bike`       |
+
+### Filter Examples
+
+**Only swimmers:**
+
+```
+python prt_generator.py registrations.csv form.pdf --event Swim
+```
+
+**Only runners on a specific date:**
+
+```
+python prt_generator.py registrations.csv form.pdf --date 22MAR26 --event Run
+```
+
+**Tuesday, 0800-0900 timeslot only:**
+
+```
+python prt_generator.py registrations.csv form.pdf --day Tuesday --timeslot 0800-0900
+```
+
+**Multiple modalities:**
+
+```
+python prt_generator.py registrations.csv form.pdf --event Swim Run
+```
+
+**Multiple dates and a specific timeslot, saved to a custom file:**
+
+```
+python prt_generator.py registrations.csv form.pdf --date 22MAR26 23MAR26 --timeslot 0800-0900 -o early_morning_sheets.pdf
+```
+
+If no participants match your filters, the program will tell you and exit without creating a file.
+
+---
+
+## What Gets Filled In on the Form
+
+The following fields are filled in automatically from the CSV:
+
+| Form Column                          | Filled From             |
+|--------------------------------------|-------------------------|
+| **#**                                | Row number (auto)       |
+| **Name (Last, First, MI)**           | LastName, FirstName, MI |
+| **Sex (M/F)**                        | Sex                     |
+| **Rank/Rate**                        | Rank                    |
+| **Age**                              | Age                     |
+| **\*Cardio Modality**                | Event                   |
+| **PRT Date / Timeslot**(top of form) | Date and Timeslot       |
+
+The following fields are left **blank** for on-site use:
+
+- Number of Push Ups
+- Forearm Plank Time
+- Cardio Time / Calories
+- Member's Signature
+- CFL/ACFL Print Name / Signature
+- Command UIC
+
+---
+
+## Help
+
+To see the full help text with all options at any time, run:
+
+```
+python prt_generator.py -h
+```
+
+Or simply run the command with no arguments:
+
+```
+python prt_generator.py
+```
+
+---
+
+## Troubleshooting
+
+**"python is not recognized as an internal or external command"**
+Python is not in your system PATH. Either reinstall Python and check "Add Python to PATH", or use the full path to python (e.g., `C:\Users\you\AppData\Local\Programs\Python\Python314\python.exe`).
+
+**"No module named pypdf" or "No module named reportlab"**
+You need to install the dependencies. Run `pip install pypdf reportlab`. If you have multiple Python versions, try `pip3 install pypdf reportlab`.
+
+**"KeyError: 'Date'" or similar column errors**
+Your CSV column headers may have extra whitespace or a BOM character. The script handles most cases automatically, but double-check that your CSV header row matches the expected column names listed in the [CSV Format](#csv-format) section. Opening the CSV in a plain text editor (not Excel) is the easiest way to verify.
+
+**"No participants match the given filters."**
+Your filter values don't match anything in the CSV. Remember that date and timeslot values must match exactly what's in the CSV (e.g., `22MAR26`, not `March 22`). The filters are case-insensitive, so `run` and `Run` both work.
+
+**First page looks fine but other pages are blank**
+Make sure you are using the latest version of the script. Earlier versions had a bug related to copying PDF pages. The current version re-reads the blank form for every page to avoid this.
+
+**The PDF doesn't open automatically**
+The script tries to open the file in your default PDF viewer. If it can't, it will print the file path so you can open it manually. On Windows, make sure you have a PDF viewer installed (Adobe Reader, Edge, etc.).
+
+**Text is misaligned on the form**
+The coordinate layout was calibrated against the NAVPERS 6110/11 (Rev. 12-2025) form saved as a specific PDF. If you are using a different version of the form or a differently-exported PDF, the text positions may not line up. Use the same blank form PDF that was provided with this tool.
