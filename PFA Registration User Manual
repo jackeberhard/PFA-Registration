@@ -1,6 +1,6 @@
 # PFA Event Registration System
 
-**Version 1.0** | Created by CWT1 Jack Eberhard | Last updated 1MAR2026
+**Version 1.0** | Created by Jack Eberhard | Last updated 1MAR2026
 
 A fullscreen desktop application for managing Physical Fitness Assessment sign-ups. Participants register themselves through a guided form, and administrators manage days, time slots, modalities, and capacity through a password-protected panel.
 
