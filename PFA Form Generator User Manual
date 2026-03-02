@@ -1,3 +1,13 @@
+# Disclaimer
+
+This software tool is provided for informational and administrative convenience only. It is not an official product of the United States Navy, the Department of Defense (DoD), or any U.S. Government entity.
+
+Use of this tool is entirely voluntary and at the user’s own risk. This application is not authorized for official readiness reporting, personnel evaluation, or fitness determination purposes, and does not replace any Navy-directed Physical Fitness Assessment (PFA) procedures, systems, or documentation requirements.
+
+Users are solely responsible for verifying the accuracy and completeness of any data generated through this tool prior to submission through official Navy systems (e.g., PRIMS).
+
+No warranty or guarantee of accuracy, reliability, or fitness for official use is expressed or implied.
+
 # PRT Score Sheet Generator
 
 Automatically fills out the official **NAVPERS 6110/11 (Rev. 12-2025) Physical Readiness Test (PRT) Score Sheet** using registration data from a CSV file.
