@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 PFA Event Registration System v1.0
-Created by CWT1 Jack Eberhard
+Created by Jack Eberhard
 - Graphical registration form with capacity-aware event/time slot selection
 - CSV-based persistence for multi-day use
 - Admin panel with login, stats, deletion, search, and summaries
