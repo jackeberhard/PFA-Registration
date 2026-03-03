@@ -378,7 +378,7 @@ class PFAApp:
     def validate_and_continue(self):
         first, last = self.reg_first.get().strip(), self.reg_last.get().strip()
         sex, age = self.reg_sex.get().strip(), self.reg_age.get().strip()
-        rank,
+        rank = self.reg_rank.get().strip(),
         if not all([first, last, sex, age, rank]):
             messagebox.showwarning("Missing Fields", "Please fill in all required fields."); return
         if sex not in ("M", "F"):
