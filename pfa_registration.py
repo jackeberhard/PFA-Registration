@@ -434,6 +434,7 @@ class PFAApp:
 
     def select_day(self, idx):
         self.selected_day_idx = idx
+        self.data.load_registrations()
         self.selected_time.set(""); self.selected_event.set("")
         for i, b in enumerate(self.day_buttons):
             b.configure(bg=COLORS["accent"] if i == idx else COLORS["bg_light"],
@@ -474,6 +475,7 @@ class PFAApp:
 
     def select_time(self, ts):
         self.selected_time.set(ts); self.selected_event.set("")
+        self.data.load_registrations()
         for b, t in self.time_buttons:
             b.configure(bg=COLORS["accent"] if t == ts else COLORS["bg_light"],
                         fg=COLORS["white"] if t == ts else COLORS["text"])
@@ -529,6 +531,7 @@ class PFAApp:
         idx = self.selected_day_idx
         if not all([ev, ts, idx is not None]):
             messagebox.showwarning("Incomplete", "Select day, time, and event."); return
+        self.data.load_registrations()
         day, date = self.data.days[idx], self.data.dates[idx]
         dk = self.data._dk(idx)
         counts, total = self.data.get_slot_counts(day, date, ts)
